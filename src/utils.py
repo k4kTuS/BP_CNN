@@ -3,12 +3,14 @@ from tensorflow.keras.applications import DenseNet169, ResNet50, VGG16
 from tensorflow.keras.applications.densenet import preprocess_input as densenet_preprocess
 from tensorflow.keras.applications.resnet50 import preprocess_input as resnet50_preprocess
 from tensorflow.keras.applications.vgg16 import preprocess_input as vgg16_preprocess
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow_addons.metrics import CohenKappa
+
+from image_preprocessing import rescale
 
 DATASET_PATH = '/content/MURA-v1.1/tvt_detailed_paths.csv'
 ROOT_DIR = '/content'
@@ -42,7 +44,8 @@ def get_dataframe(body_part, split, path=DATASET_PATH):
     return filtered_df
 
 
-def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(learning_rate=0.0001), metrics=[CohenKappa(num_classes=2, name='kappa')]):
+def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(learning_rate=0.0001),
+                metrics=[CohenKappa(num_classes=2, name='kappa')], add_top=True):
     """
     Builds and compiles a CNN model using one of tf.keras.applications pre-built architectures.
 
@@ -63,6 +66,8 @@ def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(l
         Model optimizer (name or instance)
     metrics : list
         Metrics used by the model
+    add_top : bool
+        Whether we want to add custom top layers to our model
 
     Returns
     -------
@@ -88,6 +93,12 @@ def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(l
                             input_shape=shape,
                             pooling=pooling)
     x = base_model.output
+
+    if add_top:
+        if pooling is None:
+            x = Flatten()(x)
+        x = Dense(128, activation='relu')(x)
+
     predictions = Dense(1, activation='sigmoid')(x)
 
     model = Model(inputs=base_model.input,
@@ -101,7 +112,7 @@ def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(l
 
 
 def create_generators(rotation_r=20, w_shift_r=0.05, h_shift_r=0.05, brightness_r=(0.9, 1.1), zoom_r=0.1, h_flip=True,
-                      pre_func=None):
+                      pre_func=rescale):
     """
     Creates ImageDataGenerator instances for training and validation
 
@@ -119,8 +130,7 @@ def create_generators(rotation_r=20, w_shift_r=0.05, h_shift_r=0.05, brightness_
     -------
 
     """
-    train_gen = ImageDataGenerator(rescale=1. / 255,
-                                   rotation_range=rotation_r,
+    train_gen = ImageDataGenerator(rotation_range=rotation_r,
                                    width_shift_range=w_shift_r,
                                    height_shift_range=h_shift_r,
                                    brightness_range=brightness_r,
@@ -129,8 +139,7 @@ def create_generators(rotation_r=20, w_shift_r=0.05, h_shift_r=0.05, brightness_
                                    fill_mode='reflect',
                                    preprocessing_function=pre_func)
 
-    valid_gen = ImageDataGenerator(rescale=1. / 255,
-                                   preprocessing_function=pre_func)
+    valid_gen = ImageDataGenerator(preprocessing_function=pre_func)
     return train_gen, valid_gen
 
 
