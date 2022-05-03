@@ -1,15 +1,20 @@
 import pandas as pd
-import tensorflow as tf
-from tensorflow.keras.applications import VGG16, ResNet50, DenseNet121
+from tensorflow.keras.applications import DenseNet169, ResNet50, VGG16
+from tensorflow.keras.applications.densenet import preprocess_input as densenet_preprocess
+from tensorflow.keras.applications.resnet50 import preprocess_input as resnet50_preprocess
+from tensorflow.keras.applications.vgg16 import preprocess_input as vgg16_preprocess
 from tensorflow.keras.layers import Dense
+from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow_addons.metrics import CohenKappa
 
-DEFAULT_DATASET_PATH = '/content/MURA-v1.1/tvt_detailed_paths.csv'
-DEFAULT_DIRECTORY = '/content'
+DATASET_PATH = '/content/MURA-v1.1/tvt_detailed_paths.csv'
+ROOT_DIR = '/content'
 
 
-def get_dataframe(body_part, split, path=DEFAULT_DATASET_PATH):
+def get_dataframe(body_part, split, path=DATASET_PATH):
     """
     Filters dataset by body part and data split
 
@@ -33,11 +38,11 @@ def get_dataframe(body_part, split, path=DEFAULT_DATASET_PATH):
         split = '.*'
 
     df = pd.read_csv(path)
-    filtered_df = df[(df.body_part.str.match(body_part, case=False)) & (df.split.str.match(split, case=False))]
+    filtered_df = df.loc[(df.body_part.str.match(body_part, case=False)) & (df.split.str.match(split, case=False))]
     return filtered_df
 
 
-def build_model(base_name, weights, shape, pooling, name, optimizer, loss, metrics):
+def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(learning_rate=0.0001), metrics=[CohenKappa(num_classes=2, name='kappa')]):
     """
     Builds and compiles a CNN model using one of tf.keras.applications pre-built architectures.
 
@@ -50,14 +55,12 @@ def build_model(base_name, weights, shape, pooling, name, optimizer, loss, metri
         pre-trained on ImageNet dataset or a path to load weights from.
     shape : tuple(int, int, int)
         Specified model input shape, values represent (height, width, channels) if not manually reconfigured
-    pooling : str or None
-        What type of pooling to use in the model (avg/max/None)
     name : str
         Custom name for the built model
+    pooling : str or None
+        What type of pooling to use in the model (avg/max/None)
     optimizer : str or tf.keras.optimizers
         Model optimizer (name or instance)
-    loss : str or tf.keras.losses.Loss
-        Name or instance of model loss function
     metrics : list
         Metrics used by the model
 
@@ -73,8 +76,8 @@ def build_model(base_name, weights, shape, pooling, name, optimizer, loss, metri
     """
     if base_name == 'VGG16':
         model_func = VGG16
-    elif base_name == 'DenseNet121':
-        model_func = DenseNet121
+    elif base_name == 'DenseNet169':
+        model_func = DenseNet169
     elif base_name == 'ResNet50':
         model_func = ResNet50
     else:
@@ -92,12 +95,30 @@ def build_model(base_name, weights, shape, pooling, name, optimizer, loss, metri
                   name=name)
 
     model.compile(optimizer=optimizer,
-                  loss=loss,
+                  loss=BinaryCrossentropy,
                   metrics=metrics)
     return model
 
 
-def create_generators(rotation_r=20, w_shift_r=0.05, h_shift_r=0.05, brightness_r=(0.9, 1.1), zoom_r=0.1, h_flip=False):
+def create_generators(rotation_r=20, w_shift_r=0.05, h_shift_r=0.05, brightness_r=(0.9, 1.1), zoom_r=0.1, h_flip=True,
+                      pre_func=None):
+    """
+    Creates ImageDataGenerator instances for training and validation
+
+    Parameters
+    ----------
+    rotation_r
+    w_shift_r
+    h_shift_r
+    brightness_r
+    zoom_r
+    h_flip
+    pre_func
+
+    Returns
+    -------
+
+    """
     train_gen = ImageDataGenerator(rescale=1. / 255,
                                    rotation_range=rotation_r,
                                    width_shift_range=w_shift_r,
@@ -105,20 +126,15 @@ def create_generators(rotation_r=20, w_shift_r=0.05, h_shift_r=0.05, brightness_
                                    brightness_range=brightness_r,
                                    zoom_range=zoom_r,
                                    horizontal_flip=h_flip,
-                                   fill_mode='reflect')
+                                   fill_mode='reflect',
+                                   preprocessing_function=pre_func)
 
-    valid_gen = ImageDataGenerator(rescale=1. / 255)
+    valid_gen = ImageDataGenerator(rescale=1. / 255,
+                                   preprocessing_function=pre_func)
     return train_gen, valid_gen
 
 
-def create_dataframe_flows(train_gen, valid_gen, body_part='ALL', directory=DEFAULT_DIRECTORY, dataset_type='default',
-                           img_size=(224, 224), batch_size=32):
-    train_df = get_dataframe(body_part, 'train')
-    valid_df = get_dataframe(body_part, 'valid')
-
-    if dataset_type == 'clahe':
-        directory = directory + '/CLAHE/'
-
+def create_dataframe_flows(train_gen, valid_gen, train_df, valid_df, directory=ROOT_DIR, img_size=(224, 224), batch_size=16):
     train_flow = train_gen.flow_from_dataframe(dataframe=train_df,
                                                directory=directory,
                                                x_col='filepath',
