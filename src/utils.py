@@ -153,3 +153,30 @@ def create_dataframe_flows(train_gen, valid_gen, train_df, valid_df, directory=R
                                                batch_size=batch_size,
                                                seed=27)
     return train_flow, valid_flow
+
+
+def get_class_weights(df, n_classes=2):
+    """
+    Calculates "balanced" class weights for given dataset using following formula:
+    wi = n_samples / (n_classes * n_i)
+
+    Parameters
+    ----------
+    df : pd.Dataframe
+        Dataset containing filepaths to images together with labels
+    n_classes: int
+        Number of classes in the dataset
+
+    Returns
+    ----------
+    Class weights as dictionary in format defined in TensorFlow documentation
+    """
+    n_samples = len(df.index)
+    n_positive = len(df.loc[df['label'] == 'positive'].index)
+    n_negative = len(df.loc[df['label'] == 'negative'].index)
+
+    w_positive = n_samples / (n_classes * n_positive)
+    w_negative = n_samples / (n_classes * n_negative)
+
+    return {0: w_negative, 1: w_positive}
+
