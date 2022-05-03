@@ -95,7 +95,7 @@ def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(l
                   name=name)
 
     model.compile(optimizer=optimizer,
-                  loss=BinaryCrossentropy,
+                  loss=BinaryCrossentropy(),
                   metrics=metrics)
     return model
 
