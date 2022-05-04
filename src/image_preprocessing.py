@@ -4,6 +4,7 @@ import cv2
 
 
 def clahe(img, clip=2, tile=(8, 8)):
+    img = img.astype('uint8')
     clahe = cv2.createCLAHE(clipLimit=clip, tileGridSize=tile)
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     lab[..., 0] = clahe.apply(lab[..., 0])
@@ -11,6 +12,7 @@ def clahe(img, clip=2, tile=(8, 8)):
 
 
 def eq_hist(img):
+    img = img.astype('uint8')
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     lab[..., 0] = cv2.equalizeHist(lab[..., 0])
     return cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
