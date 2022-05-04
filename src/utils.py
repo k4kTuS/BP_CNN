@@ -3,7 +3,7 @@ from tensorflow.keras.applications import DenseNet169, ResNet50, VGG16
 from tensorflow.keras.applications.densenet import preprocess_input as densenet_preprocess
 from tensorflow.keras.applications.resnet50 import preprocess_input as resnet50_preprocess
 from tensorflow.keras.applications.vgg16 import preprocess_input as vgg16_preprocess
-from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense, Dropout, Flatten
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
@@ -98,6 +98,7 @@ def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(l
         if pooling is None:
             x = Flatten()(x)
         x = Dense(128, activation='relu')(x)
+        x = Dropout(0.2)(x)
 
     predictions = Dense(1, activation='sigmoid')(x)
 
@@ -114,21 +115,33 @@ def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(l
 def create_generators(rotation_r=20, w_shift_r=0.05, h_shift_r=0.05, brightness_r=(0.9, 1.1), zoom_r=0.1, h_flip=True,
                       pre_func=rescale):
     """
-    Creates ImageDataGenerator instances for training and validation
+    Creates two ImageDataGenerator instances for training and validation. Training generator uses several augmentation
+    methods, while valid generator only used provided preprocessing function.
+
+    More detailed information about ImageDataGenerator and parameters can be found in TensorFlow documentation:
+    https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/ImageDataGenerator
 
     Parameters
     ----------
     rotation_r
+        Range specifying rotation degree
     w_shift_r
+        Defines image width shifting, one possible option is to provide fraction of image width
     h_shift_r
+        Defines image height shifting, one possible option is to provide fraction of image height
     brightness_r
+        Range from which brightness value will be picked, it can be both increased and decreased
     zoom_r
+        Random zooming range
     h_flip
+        Whether to flip the image horizontally or not
     pre_func
+        Function applied to each input before feeding it to the model. It can be a custom-defined function, that
+        takes the image as an argument and return the modified image of the same shape
 
     Returns
     -------
-
+    Training data generator with augmentation and validation generator
     """
     train_gen = ImageDataGenerator(rotation_range=rotation_r,
                                    width_shift_range=w_shift_r,
@@ -144,6 +157,30 @@ def create_generators(rotation_r=20, w_shift_r=0.05, h_shift_r=0.05, brightness_
 
 
 def create_dataframe_flows(train_gen, valid_gen, train_df, valid_df, directory=ROOT_DIR, img_size=(224, 224), batch_size=16):
+    """
+    Creates train and validation dataset flows from provided dataframes.
+
+    Parameters
+    ----------
+    train_gen : ImageDataGenerator
+        Used for feeding training data to the model
+    valid_gen : ImageDataGenerator
+        Used for feeding validation data to the model
+    train_df : pd.Dataframe
+        Must contain columns['filepath', 'label'] with training image filepaths with their labels
+    valid_df : pd.Dataframe
+        Must contain columns['filepath', 'label'] with validation image filepaths with their labels
+    directory : str
+        Root directory of the dataset to be joined with filepaths obtained from dataframes
+    img_size : Tuple(x, y)
+        Image size required by the model input
+    batch_size : int
+        Number of images in each batch (it's best practice to use powers of 2)
+
+    Returns
+    -------
+    Training and validation dataframe flows
+    """
     train_flow = train_gen.flow_from_dataframe(dataframe=train_df,
                                                directory=directory,
                                                x_col='filepath',
