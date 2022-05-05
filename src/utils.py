@@ -45,7 +45,7 @@ def get_dataframe(body_part, split, path=DATASET_PATH):
 
 
 def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(learning_rate=0.0001),
-                metrics=[CohenKappa(num_classes=2, name='kappa')], add_top=True):
+                metrics=[CohenKappa(num_classes=2, name='kappa')], add_top=False):
     """
     Builds and compiles a CNN model using one of tf.keras.applications pre-built architectures.
 
