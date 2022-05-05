@@ -201,17 +201,16 @@ def create_dataframe_flows(train_gen, valid_gen, train_df, valid_df, directory=R
     return train_flow, valid_flow
 
 
-def get_class_weights(df, n_classes=2):
+def get_class_weights(df):
     """
-    Calculates "balanced" class weights for given dataset using following formula:
-    wi = n_samples / (n_classes * n_i)
+    Calculates class weights by basic approach for binary tasks:
+    w0 = n_1 / n_samples
+    w1 = n_0 / n_samples
 
     Parameters
     ----------
     df : pd.Dataframe
         Dataset containing filepaths to images together with labels
-    n_classes: int
-        Number of classes in the dataset
 
     Returns
     ----------
@@ -221,8 +220,8 @@ def get_class_weights(df, n_classes=2):
     n_positive = len(df.loc[df['label'] == 'positive'].index)
     n_negative = len(df.loc[df['label'] == 'negative'].index)
 
-    w_positive = n_samples / (n_classes * n_positive)
-    w_negative = n_samples / (n_classes * n_negative)
+    w_positive = n_negative / n_samples
+    w_negative = n_positive / n_samples
 
     return {0: w_negative, 1: w_positive}
 
