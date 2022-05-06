@@ -1,4 +1,8 @@
 import pandas as pd
+import numpy as np
+import cv2
+
+import tensorflow as tf
 from tensorflow.keras.applications import DenseNet169, ResNet50, VGG16
 from tensorflow.keras.applications.densenet import preprocess_input as densenet_preprocess
 from tensorflow.keras.applications.resnet50 import preprocess_input as resnet50_preprocess
@@ -44,7 +48,7 @@ def get_dataframe(body_part, split, path=DATASET_PATH):
     return filtered_df
 
 
-def build_model(base_name, weights, shape, name, pooling='max', optimizer=Adam(learning_rate=0.0001),
+def build_model(base_name, weights, shape, name, pooling='avg', optimizer=Adam(learning_rate=0.0001),
                 metrics=[CohenKappa(num_classes=2, name='kappa')], add_top=False):
     """
     Builds and compiles a CNN model using one of tf.keras.applications pre-built architectures.
@@ -225,3 +229,138 @@ def get_class_weights(df):
 
     return {0: w_negative, 1: w_positive}
 
+
+def grad_cam(img, model, last_conv_layer=None):
+    """
+    Grad-CAM implementation, the majority of the code is inspired by:
+    https://github.com/ismailuddin/gradcam-tensorflow-2/blob/master/notebooks/GradCam.ipynb
+    Finding last convolutional layer taken from:
+    https://pyimagesearch.com/2020/03/09/grad-cam-visualize-class-activation-maps-with-keras-tensorflow-and-deep-learning/
+
+    Parameters
+    ----------
+    img: np.array
+        Input image compatible with the input shape of used model
+    model: tf.keras.models.Model
+        CNN model used for creating prediction and gradients
+    last_conv_layer: str or None
+        Name of the last convolutional layer in the architecture, if not provided, function tries to find the layer
+
+    Returns
+    -------
+    Computed heatmap of image regions most responsible for final prediction
+    """
+    # Try to find convolutional layer if one is not provided
+    if last_conv_layer is None:
+        for layer in reversed(model.layers):
+            if len(layer.output_shape) == 4:
+                last_conv_layer = layer.name
+                break
+    if last_conv_layer is None:
+        raise ValueError("Could not find convolutional layer.")
+
+    # Model with orignal inputs and two outputs, one for the last convolutional layer and the other for prediction
+    grad_model = Model(inputs=[model.inputs],
+                       outputs=[model.get_layer(last_conv_layer).output, model.output])
+
+    # Expand image to match model input shape
+    inputs = np.expand_dims(img, axis=0)
+
+    # Get outputs from convolutional and prediction layers
+    with tf.GradientTape() as tape:
+        (conv_out, pred_out) = grad_model(inputs)
+        # Watch convolutional output
+        tape.watch(conv_out)
+        # Only one predicting class present (binary task)
+        pred = pred_out[0]
+        print('Prediction output:', pred)
+
+    # calculate gradients from watched output and apply average pooling
+    grads = tape.gradient(pred, conv_out)
+    pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+
+    # Remove batch dimension
+    conv_out = conv_out[0]
+
+    # Multiply gradients with feature map
+    conv_out = tf.multiply(pooled_grads, conv_out)
+
+    # Average over all the filters to get a single 2D array
+    gradcam = np.mean(conv_out, axis=-1)
+    # Clip the values (equivalent to applying ReLU)
+    # and then normalise the values
+    gradcam = np.clip(gradcam, 0, np.max(gradcam)) / np.max(gradcam)
+
+    # Resize heatmap to match input image size
+    gradcam = cv2.resize(gradcam, (img.shape[1], img.shape[0]))
+
+    return gradcam
+
+
+def guided_grad_cam(img, model, last_conv_layer=None):
+    """
+    Guided Grad-CAM implementation, the majority of the code is inspired by:
+    https://github.com/ismailuddin/gradcam-tensorflow-2/blob/master/notebooks/GradCam.ipynb
+    Finding last convolutional layer taken from:
+    https://pyimagesearch.com/2020/03/09/grad-cam-visualize-class-activation-maps-with-keras-tensorflow-and-deep-learning/
+
+    Parameters
+    ----------
+    img: np.array
+        Input image compatible with the input shape of used model
+    model: tf.keras.models.Model
+        CNN model used for creating prediction and gradients
+    last_conv_layer: str or None
+        Name of the last convolutional layer in the architecture, if not provided, function tries to find the layer
+
+    Returns
+    -------
+    Computed heatmap of image regions most responsible for final prediction
+    """
+    # Try to find convolutional layer if one is not provided
+    if last_conv_layer is None:
+        for layer in reversed(model.layers):
+            if len(layer.output_shape) == 4:
+                last_conv_layer = layer.name
+                break
+    if last_conv_layer is None:
+        raise ValueError("Could not find convolutional layer.")
+
+    # Model with orignal inputs and two outputs, one for the last convolutional layer and the other for prediction
+    grad_model = tf.keras.Model(inputs=[model.inputs],
+                                outputs=[model.get_layer(last_conv_layer).output, model.output])
+
+    # Expand image to match model input shape
+    inputs = np.expand_dims(img, axis=0)
+
+    # Get outputs from convolutional and prediction layers
+    with tf.GradientTape() as tape:
+        (conv_out, pred_out) = grad_model(inputs)
+        # Watch convolutional output
+        tape.watch(conv_out)
+        # Only one predicting class present (binary task)
+        pred = pred_out[0]
+        print('Prediction output:', pred)
+
+    # Calculate gradients from watched output, get rid of batch dimension
+    grads = tape.gradient(pred, conv_out)[0]
+    conv_out = conv_out[0]
+
+    # Guided backpropagation - select gradients participating positively to final prediction
+    guided_grads = tf.cast(conv_out > 0, "float32") * tf.cast(grads > 0, "float32") * grads
+
+    # Apply average pooling
+    pooled_guided_grads = tf.reduce_mean(guided_grads, axis=(0, 1))
+
+    # Multiply gradients with feature map and sum values over all filters
+    guided_gradcam = tf.reduce_sum(tf.multiply(pooled_guided_grads, conv_out), axis=-1)
+
+    # Clip the values (equivalent to applying ReLU)
+    # and then normalise the values
+    guided_gradcam = np.clip(guided_gradcam, 0, np.max(guided_gradcam))
+    guided_gradcam = (guided_gradcam - guided_gradcam.min()) / (guided_gradcam.max() - guided_gradcam.min())
+
+    # Resize heatmap to match input image size
+    guided_gradcam = cv2.resize(guided_gradcam, (img.shape[1], img.shape[0]))
+
+    return guided_gradcam
