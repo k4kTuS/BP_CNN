@@ -1,4 +1,6 @@
 .idea/*
 datasets/*
+figures/*
+models/*
 src/.ipynb_checkpoints
 
