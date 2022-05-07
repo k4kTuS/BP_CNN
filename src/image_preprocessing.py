@@ -66,7 +66,7 @@ def bins_dominant_color(img):
     return np.unravel_index(np.bincount(img1D).argmax(), col_range)[0]
 
 
-def image_crop(img, box_ratio=0.15, contour_ratio=0.20, save_steps=False):
+def image_crop(img, box_ratio=0.05, contour_ratio=0.3, save_steps=False):
     """
     Custom preprocessing method consisting of multiple steps. Firstly, the dominant color in the form of a grayscale
     pixel intensity is determined. If the image is mostly white, it is inverted The image is converted to grayscale,
@@ -112,11 +112,11 @@ def image_crop(img, box_ratio=0.15, contour_ratio=0.20, save_steps=False):
     x, y, w, h = cv2.boundingRect(thresh_box)
 
     box_img = img.copy()  # Image with drawn bounding rectangle, for visualisation
+    cv2.rectangle(box_img, (x, y), (x + w, y + h), (255, 0, 0), 2)
     cropped_img = blur.copy()  # Image to be cropped
 
     # If the bounding rectangle area is bigger than given threshold, crop image according to the rectangle
     if (w * h) > (img.shape[0] * img.shape[1] * box_ratio):
-        cv2.rectangle(box_img, (x, y), (x + w, y + h), (255, 0, 0), 2)
         cropped_img = cropped_img[y:y + h, x:x + w]
 
     # Apply binary threshold using Otsu's method
@@ -129,7 +129,7 @@ def image_crop(img, box_ratio=0.15, contour_ratio=0.20, save_steps=False):
     # Create convex hull from the biggest contour and draw it
     hull = cv2.convexHull(max_cont, False)
     hull_img = cv2.cvtColor(cropped_img, cv2.COLOR_GRAY2BGR)
-    cv2.drawContours(hull_img, [hull], 0, (0, 0, 255), 4)
+    cv2.drawContours(hull_img, [hull], 0, (0, 0, 255), 3)
 
     # Prepare mask for bitwise and, initially fully black
     mask = np.zeros((thresh_contours.shape[0], thresh_contours.shape[1]), np.uint8)
