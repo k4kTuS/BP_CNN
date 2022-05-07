@@ -92,6 +92,7 @@ def image_crop(img, box_ratio=0.05, contour_ratio=0.3, save_steps=False):
     -------
     Final preprocessed image or multiple images representing specific function steps.
     """
+    orig_img = img.copy()
     # Determine dominant color using bins
     dominant_color = bins_dominant_color(img)
     # If image is white-ish, invert it
@@ -111,8 +112,8 @@ def image_crop(img, box_ratio=0.05, contour_ratio=0.3, save_steps=False):
     # Get bounding rectangle for binary threshold
     x, y, w, h = cv2.boundingRect(thresh_box)
 
-    box_img = img.copy()  # Image with drawn bounding rectangle, for visualisation
-    cv2.rectangle(box_img, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    box_img = cv2.cvtColor(blur, cv2.COLOR_GRAY2BGR)  # Image with drawn bounding rectangle, for visualisation
+    cv2.rectangle(box_img, (x, y), (x + w, y + h), (255, 0, 0), 3)
     cropped_img = blur.copy()  # Image to be cropped
 
     # If the bounding rectangle area is bigger than given threshold, crop image according to the rectangle
@@ -148,6 +149,6 @@ def image_crop(img, box_ratio=0.05, contour_ratio=0.3, save_steps=False):
     final_img = masked_img[y:y + h, x:x + w]
 
     if save_steps:
-        return img, blur, box_img, cropped_img, thresh_contours, hull_img, final_img
+        return orig_img, blur, box_img, cropped_img, hull_img, final_img
     else:
         return final_img
