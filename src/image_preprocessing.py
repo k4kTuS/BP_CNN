@@ -71,7 +71,7 @@ def image_crop(img, box_ratio=0.05, contour_ratio=0.3, save_steps=False):
     Custom preprocessing method consisting of multiple steps. Firstly, the dominant color in the form of a grayscale
     pixel intensity is determined. If the image is mostly white, it is inverted The image is converted to grayscale,
     then CLAHE and gaussian blur are applied. Binary threshold with Otsu's method to determine the threshold value is
-    used to create a mask, then a bouding rectangle area is fit to it. If the area is bigger than given threshold,
+    used to create a mask, then a bounding rectangle area is fit to it. If the area is bigger than given threshold,
     the image is cropped accordingly and another binary threshold with Otsu's method is used. Contours are found using
     the second mask and the biggest one is transformed into a convex hull. If the hull area is bigger than given
     threshold a mask created from it is used to filter out pixels outside the hull area and image is cropped again.
