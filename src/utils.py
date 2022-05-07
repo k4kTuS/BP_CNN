@@ -92,8 +92,13 @@ def build_model(base_name, weights, shape, name, pooling='avg', optimizer=Adam(l
     else:
         raise ValueError(f"Pre-built model {base_name} not available")
 
+    if weights == 'imagenet':
+        base_weights = 'imagenet'
+    else:
+        base_weights = None
+
     base_model = model_func(include_top=False,
-                            weights=weights,
+                            weights=base_weights,
                             input_shape=shape,
                             pooling=pooling)
     x = base_model.output
@@ -113,6 +118,11 @@ def build_model(base_name, weights, shape, name, pooling='avg', optimizer=Adam(l
     model.compile(optimizer=optimizer,
                   loss=BinaryCrossentropy(),
                   metrics=metrics)
+
+    if weights is not None and weights != 'imagenet':
+        model.load_weights(weights)
+        print("Loaded weights from", weights)
+
     return model
 
 
