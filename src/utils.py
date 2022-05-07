@@ -249,7 +249,7 @@ def grad_cam(img, model, last_conv_layer=None):
 
     Parameters
     ----------
-    img: np.array
+    img: np.ndarray
         Input image compatible with the input shape of used model
     model: tf.keras.models.Model
         CNN model used for creating prediction and gradients
@@ -316,7 +316,7 @@ def guided_grad_cam(img, model, last_conv_layer=None):
 
     Parameters
     ----------
-    img: np.array
+    img: np.ndarray
         Input image compatible with the input shape of used model
     model: tf.keras.models.Model
         CNN model used for creating prediction and gradients
