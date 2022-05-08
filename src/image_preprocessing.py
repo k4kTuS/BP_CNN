@@ -3,6 +3,15 @@ import numpy as np
 import cv2
 
 
+def clahe_10_rescale(img):
+    """
+    Because ImageDataGenerator accepts preprocessing function that only gets the input image as a parameter, I created
+    this function to apply CLAHE with the second clipLimit used in my experiments
+    """
+    eq = clahe(img, clip=10)
+    return rescale(eq)
+
+
 def clahe_rescale(img, clip=2, tile=(8, 8)):
     """
     Preprocessing pipeline for applying our CLAHE function and then rescaling the image.
