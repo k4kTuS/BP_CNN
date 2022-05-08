@@ -3,6 +3,14 @@ import numpy as np
 import cv2
 
 
+def clahe_rescale(img, clip=2, tile=(8, 8)):
+    """
+    Preprocessing pipeline for applying our CLAHE function and then rescaling the image.
+    """
+    eq = clahe(img, clip, tile)
+    return rescale(eq)
+
+
 def clahe(img, clip=2, tile=(8, 8)):
     """
     Applies CLAHE to the luminance channel of a 3-channel image in LAB color
@@ -25,6 +33,14 @@ def clahe(img, clip=2, tile=(8, 8)):
     lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
     lab[..., 0] = clahe.apply(lab[..., 0])
     return cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
+
+
+def eq_hist_rescale(img):
+    """
+    Preprocessing pipeline for applying our histogram equalization function and then rescaling the image.
+    """
+    eq = eq_hist(img)
+    return rescale(eq)
 
 
 def eq_hist(img):
