@@ -16,11 +16,8 @@ from tensorflow_addons.metrics import CohenKappa
 
 from image_preprocessing import rescale
 
-DATASET_PATH = '/content/MURA-v1.1/tvt_detailed_paths.csv'
-ROOT_DIR = '/content'
 
-
-def get_dataframe(body_part, split, path=DATASET_PATH):
+def get_dataframe(body_part, split, path):
     """
     Filters dataset by body part and data split
 
@@ -170,7 +167,7 @@ def create_generators(rotation_r=20, w_shift_r=0.05, h_shift_r=0.05, brightness_
     return train_gen, valid_gen
 
 
-def create_dataframe_flows(train_gen, valid_gen, train_df, valid_df, directory=ROOT_DIR, img_size=(224, 224), batch_size=16):
+def create_dataframe_flows(train_gen, valid_gen, train_df, valid_df, directory, img_size=(224, 224), batch_size=16):
     """
     Creates train and validation dataset flows from provided dataframes.
 
