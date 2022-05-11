@@ -155,7 +155,7 @@ def image_crop(img, box_ratio=0.05, contour_ratio=0.3, save_steps=False):
     # Create convex hull from the biggest contour and draw it
     hull = cv2.convexHull(max_cont, False)
     hull_img = cv2.cvtColor(cropped_img, cv2.COLOR_GRAY2BGR)
-    cv2.drawContours(hull_img, [hull], 0, (0, 0, 255), 3)
+    cv2.drawContours(hull_img, [hull], 0, (0, 255, 0), 3)
 
     # Prepare mask for bitwise and, initially fully black
     mask = np.zeros((thresh_contours.shape[0], thresh_contours.shape[1]), np.uint8)
