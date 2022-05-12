@@ -1,0 +1,133 @@
+Found 29592 validated image filenames belonging to 2 classes.
+Found 9865 validated image filenames belonging to 2 classes.
+------------------------------------------------------------------------
+Training fold: 1
+Epoch 1/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2706 - kappa: 0.4246
+Epoch 1: val_kappa improved from -inf to 0.46295, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_1_best.h5
+1850/1850 [==============================] - 637s 333ms/step - loss: 0.2706 - kappa: 0.4246 - val_loss: 0.5556 - val_kappa: 0.4629
+Epoch 2/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2413 - kappa: 0.5168
+Epoch 2: val_kappa improved from 0.46295 to 0.56995, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_1_best.h5
+1850/1850 [==============================] - 609s 329ms/step - loss: 0.2413 - kappa: 0.5168 - val_loss: 0.4684 - val_kappa: 0.5699
+Epoch 3/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2314 - kappa: 0.5522
+Epoch 3: val_kappa did not improve from 0.56995
+1850/1850 [==============================] - 599s 324ms/step - loss: 0.2314 - kappa: 0.5522 - val_loss: 0.4663 - val_kappa: 0.5673
+Epoch 4/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2243 - kappa: 0.5700
+Epoch 4: val_kappa did not improve from 0.56995
+1850/1850 [==============================] - 600s 324ms/step - loss: 0.2243 - kappa: 0.5700 - val_loss: 0.4595 - val_kappa: 0.5666
+Epoch 5/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2181 - kappa: 0.5867
+Epoch 5: val_kappa improved from 0.56995 to 0.57557, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_1_best.h5
+Restoring model weights from the end of the best epoch: 2.
+1850/1850 [==============================] - 600s 325ms/step - loss: 0.2181 - kappa: 0.5867 - val_loss: 0.4686 - val_kappa: 0.5756
+Epoch 5: early stopping
+Score for fold 1: loss of 0.4686; kappa of 0.5756
+Found 29593 validated image filenames belonging to 2 classes.
+Found 9864 validated image filenames belonging to 2 classes.
+------------------------------------------------------------------------
+Training fold: 2
+Epoch 1/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2710 - kappa: 0.4235
+Epoch 1: val_kappa improved from -inf to 0.50943, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_2_best.h5
+1850/1850 [==============================] - 617s 325ms/step - loss: 0.2710 - kappa: 0.4235 - val_loss: 0.5021 - val_kappa: 0.5094
+Epoch 2/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2432 - kappa: 0.5164
+Epoch 2: val_kappa improved from 0.50943 to 0.53552, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_2_best.h5
+1850/1850 [==============================] - 599s 324ms/step - loss: 0.2432 - kappa: 0.5164 - val_loss: 0.4912 - val_kappa: 0.5355
+Epoch 3/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2336 - kappa: 0.5522
+Epoch 3: val_kappa improved from 0.53552 to 0.53846, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_2_best.h5
+1850/1850 [==============================] - 598s 323ms/step - loss: 0.2336 - kappa: 0.5522 - val_loss: 0.4866 - val_kappa: 0.5385
+Epoch 4/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2242 - kappa: 0.5739
+Epoch 4: val_kappa did not improve from 0.53846
+1850/1850 [==============================] - 596s 322ms/step - loss: 0.2242 - kappa: 0.5739 - val_loss: 0.4874 - val_kappa: 0.5362
+Epoch 5/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2200 - kappa: 0.5804
+Epoch 5: val_kappa improved from 0.53846 to 0.56759, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_2_best.h5
+1850/1850 [==============================] - 598s 323ms/step - loss: 0.2200 - kappa: 0.5804 - val_loss: 0.4584 - val_kappa: 0.5676
+Epoch 6/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2151 - kappa: 0.5988
+Epoch 6: val_kappa did not improve from 0.56759
+1850/1850 [==============================] - 597s 322ms/step - loss: 0.2151 - kappa: 0.5988 - val_loss: 0.5361 - val_kappa: 0.4948
+Score for fold 2: loss of 0.4584; kappa of 0.5676
+Found 29593 validated image filenames belonging to 2 classes.
+Found 9864 validated image filenames belonging to 2 classes.
+------------------------------------------------------------------------
+Training fold: 3
+Epoch 1/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2811 - kappa: 0.3816
+Epoch 1: val_kappa improved from -inf to 0.50777, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_3_best.h5
+1850/1850 [==============================] - 617s 325ms/step - loss: 0.2811 - kappa: 0.3816 - val_loss: 0.5126 - val_kappa: 0.5078
+Epoch 2/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2508 - kappa: 0.4998
+Epoch 2: val_kappa did not improve from 0.50777
+1850/1850 [==============================] - 598s 323ms/step - loss: 0.2508 - kappa: 0.4998 - val_loss: 0.8652 - val_kappa: 0.3704
+Epoch 3/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2408 - kappa: 0.5247
+Epoch 3: val_kappa improved from 0.50777 to 0.55836, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_3_best.h5
+1850/1850 [==============================] - 598s 323ms/step - loss: 0.2408 - kappa: 0.5247 - val_loss: 0.4729 - val_kappa: 0.5584
+Epoch 4/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2331 - kappa: 0.5519
+Epoch 4: val_kappa did not improve from 0.55836
+1850/1850 [==============================] - 596s 322ms/step - loss: 0.2331 - kappa: 0.5519 - val_loss: 0.5250 - val_kappa: 0.4941
+Epoch 5/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2287 - kappa: 0.5634
+Epoch 5: val_kappa did not improve from 0.55836
+1850/1850 [==============================] - 596s 322ms/step - loss: 0.2287 - kappa: 0.5634 - val_loss: 0.4698 - val_kappa: 0.5447
+Epoch 6/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2239 - kappa: 0.5746
+Epoch 6: val_kappa did not improve from 0.55836
+Restoring model weights from the end of the best epoch: 3.
+1850/1850 [==============================] - 596s 322ms/step - loss: 0.2239 - kappa: 0.5746 - val_loss: 0.4904 - val_kappa: 0.5115
+Epoch 6: early stopping
+Score for fold 3: loss of 0.4729; kappa of 0.5584
+Found 29593 validated image filenames belonging to 2 classes.
+Found 9864 validated image filenames belonging to 2 classes.
+------------------------------------------------------------------------
+Training fold: 4
+Epoch 1/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2803 - kappa: 0.3827
+Epoch 1: val_kappa improved from -inf to 0.50253, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_4_best.h5
+1850/1850 [==============================] - 616s 324ms/step - loss: 0.2803 - kappa: 0.3827 - val_loss: 0.4990 - val_kappa: 0.5025
+Epoch 2/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2505 - kappa: 0.4957
+Epoch 2: val_kappa improved from 0.50253 to 0.57474, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_4_best.h5
+1850/1850 [==============================] - 597s 323ms/step - loss: 0.2505 - kappa: 0.4957 - val_loss: 0.4666 - val_kappa: 0.5747
+Epoch 3/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2390 - kappa: 0.5295
+Epoch 3: val_kappa did not improve from 0.57474
+1850/1850 [==============================] - 596s 322ms/step - loss: 0.2390 - kappa: 0.5295 - val_loss: 0.6188 - val_kappa: 0.3258
+Epoch 4/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2301 - kappa: 0.5578
+Epoch 4: val_kappa improved from 0.57474 to 0.59275, saving model to /content/drive/MyDrive/MURA/models/DenseNet169FOLD_4_best.h5
+1850/1850 [==============================] - 597s 323ms/step - loss: 0.2301 - kappa: 0.5578 - val_loss: 0.4533 - val_kappa: 0.5927
+Epoch 5/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2257 - kappa: 0.5709
+Epoch 5: val_kappa did not improve from 0.59275
+1850/1850 [==============================] - 595s 322ms/step - loss: 0.2257 - kappa: 0.5709 - val_loss: 0.5616 - val_kappa: 0.4864
+Epoch 6/6
+1850/1850 [==============================] - ETA: 0s - loss: 0.2198 - kappa: 0.5860
+Epoch 6: val_kappa did not improve from 0.59275
+1850/1850 [==============================] - 594s 321ms/step - loss: 0.2198 - kappa: 0.5860 - val_loss: 0.4507 - val_kappa: 0.5766
+Score for fold 4: loss of 0.4533; kappa of 0.5927
+
+
+------------------------------------------------------------------------
+Best scores per fold
+------------------------------------------------------------------------
+> Fold 1 - Loss: 0.4686 - Kappa: 0.5756
+------------------------------------------------------------------------
+> Fold 2 - Loss: 0.4584 - Kappa: 0.5676
+------------------------------------------------------------------------
+> Fold 3 - Loss: 0.4729 - Kappa: 0.5584
+------------------------------------------------------------------------
+> Fold 4 - Loss: 0.4533 - Kappa: 0.5927
+------------------------------------------------------------------------
+Average scores for all folds:
+> Kappa: 0.5736 (+- 0.0126)
+> Loss: 0.4633
+------------------------------------------------------------------------

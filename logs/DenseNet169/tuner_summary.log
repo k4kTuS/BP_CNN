@@ -1,0 +1,107 @@
+Results summary
+Results in /content/drive/MyDrive/MURA/tuning/densenet169_hp
+Showing 10 best trials
+<keras_tuner.engine.objective.Objective object at 0x7f331d168550>
+Trial summary
+Hyperparameters:
+pool: avg
+lr: 0.0001
+batch_size: 16
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 0001
+Score: 0.5986765623092651
+Trial summary
+Hyperparameters:
+pool: max
+lr: 0.0001
+batch_size: 32
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.5517345666885376
+Trial summary
+Hyperparameters:
+pool: avg
+lr: 0.0001
+batch_size: 16
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.5511786937713623
+Trial summary
+Hyperparameters:
+pool: avg
+lr: 0.0001
+batch_size: 8
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.5373811721801758
+Trial summary
+Hyperparameters:
+pool: max
+lr: 5e-05
+batch_size: 32
+tuner/epochs: 7
+tuner/initial_epoch: 3
+tuner/bracket: 1
+tuner/round: 1
+tuner/trial_id: 0002
+Score: 0.49190616607666016
+Trial summary
+Hyperparameters:
+pool: max
+lr: 5e-05
+batch_size: 32
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.33928990364074707
+Trial summary
+Hyperparameters:
+pool: max
+lr: 0.0005
+batch_size: 8
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.30699336528778076
+Trial summary
+Hyperparameters:
+pool: avg
+lr: 0.0005
+batch_size: 8
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.24231863021850586
+Trial summary
+Hyperparameters:
+pool: avg
+lr: 0.001
+batch_size: 32
+tuner/epochs: 7
+tuner/initial_epoch: 0
+tuner/bracket: 0
+tuner/round: 0
+Score: 0.1451714038848877
+Trial summary
+Hyperparameters:
+pool: avg
+lr: 0.001
+batch_size: 8
+tuner/epochs: 3
+tuner/initial_epoch: 0
+tuner/bracket: 1
+tuner/round: 0
+Score: 0.080233633518219
+
